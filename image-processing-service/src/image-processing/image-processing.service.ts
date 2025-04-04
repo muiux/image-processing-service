@@ -34,6 +34,15 @@ export class ImageProcessingService {
     this.server = `http://localhost:${port}`;
   }
 
+  /**
+   * Retrieves file paths related to the uploaded image.
+   *
+   * @param file The uploaded image file object.
+   * @returns Object containing:
+   *   - filePath: Full path to the uploaded file.
+   *   - fileBaseName: Base name of the file without the extension.
+   *   - originalOutputPath: Path where the webp-converted file will be stored.
+   */
   private getFilePaths(file: Express.Multer.File) {
     const filePath = path.join(UPLOAD_DIR, file.filename);
     const baseName = path.parse(file.filename).name;
@@ -45,6 +54,13 @@ export class ImageProcessingService {
     return { filePath, fileBaseName, originalOutputPath };
   }
 
+  /**
+   * Converts the uploaded image to WebP format and deletes the original file.
+   *
+   * @param filePath Path to the uploaded image.
+   * @param originalOutputPath Path where the webp-converted file will be saved.
+   * @returns A promise that resolves once the image conversion is complete.
+   */
   private async convertToWebP(filePath: string, originalOutputPath: string) {
     const imageBuffer = await fs.promises.readFile(filePath);
     await fs.promises
@@ -55,6 +71,15 @@ export class ImageProcessingService {
     await unlinkAsync(filePath);
   }
 
+  /**
+   * Generates variations of the uploaded image based on the specified image type.
+   * The variation images will be resized accordingly and returned.
+   *
+   * @param fileBaseName The base name of the uploaded file (without extension).
+   * @param filePath The full path to the uploaded file.
+   * @param imageType The type of image variation to generate (e.g., promotion).
+   * @returns The path to the generated variation image.
+   */
   private async generateVariations(
     fileBaseName: string,
     filePath: string,
@@ -80,6 +105,16 @@ export class ImageProcessingService {
     return variation;
   }
 
+  /**
+   * Main method for processing an uploaded image. This includes converting the image
+   * to WebP format and generating any required image variations.
+   *
+   * @param file The uploaded image file object.
+   * @param imageType The image type (used to generate variations like promotion).
+   * @returns An object containing:
+   *   - original: URL to the WebP-converted original image.
+   *   - variation: URL to the generated image variation.
+   */
   async processImage(file: Express.Multer.File, imageType: ImageType) {
     const { filePath, fileBaseName, originalOutputPath } =
       this.getFilePaths(file);
@@ -111,6 +146,14 @@ export class ImageProcessingService {
     }
   }
 
+  /**
+   * Crops the uploaded image based on specified coordinates and dimensions, and returns
+   * the path to the cropped image.
+   *
+   * @param file The uploaded image file object.
+   * @param cropOptions Object containing crop details (x, y, width, height).
+   * @returns The path to the cropped image.
+   */
   async cropImage(file: Express.Multer.File, cropOptions: CropOption) {
     const { filePath, fileBaseName, originalOutputPath } =
       this.getFilePaths(file);
