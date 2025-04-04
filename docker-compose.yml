@@ -1,0 +1,9 @@
+services:
+  image-processor:
+    container_name: image-processing-service
+    build: ./image-processing-service
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+    restart: unless-stopped

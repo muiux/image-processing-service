@@ -1,0 +1,6 @@
+{
+  "evenBetterToml.formatter.crlf": false,
+  "prettier.embeddedLanguageFormatting": "auto",
+  "prettier.bracketSameLine": true,
+  "files.eol": "\n"
+}
